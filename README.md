@@ -39,15 +39,15 @@ makeHttpRequest('GET', 'https://api.example.com/data')
 
 ### En Vue 3
 
-Registra `HttpRequestPlugin` en tu aplicación Vue para acceder a él globalmente.
+Registra `VueHttpRequestPlugin` en tu aplicación Vue para acceder a él globalmente.
 
 ```javascript
 import { createApp } from 'vue';
 import App from './App.vue';
-import { HttpRequestPlugin } from 'innoboxrr-http-request';
+import { VueHttpRequestPlugin } from 'innoboxrr-http-request';
 
 const app = createApp(App);
-app.use(HttpRequestPlugin);
+app.use(VueHttpRequestPlugin);
 
 app.mount('#app');
 ```
