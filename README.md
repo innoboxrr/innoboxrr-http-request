@@ -1,4 +1,3 @@
-```
 # HTTP Request Handler 🌐
 
 [![NPM version](https://img.shields.io/npm/v/http-request-handler.svg)](https://www.npmjs.com/package/http-request-handler)
@@ -68,6 +67,38 @@ export default {
   }
 };
 ```
+
+### En Vuex
+
+Utiliza VuexHttpRequestPlugin para inyectar la función en tu store de Vuex.
+
+```javascript
+import Vuex from 'vuex';
+import { VuexHttpRequestPlugin } from 'http-request-handler';
+
+const store = new Vuex.Store({
+    // Tu configuración de Vuex...
+    plugins: [VuexHttpRequestPlugin]
+});
+```
+Luego, en tus acciones Vuex:
+
+```javascript
+// En un módulo Vuex
+actions: {
+    fetchData({ commit }) {
+        this.$httpRequest('GET', 'https://api.example.com')
+            .then(response => {
+                commit('setData', response);
+            })
+            .catch(error => {
+                console.error(error);
+            });
+    }
+}
+
+```
+
 
 ## 🔍 Documentación
 
