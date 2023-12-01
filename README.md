@@ -1,21 +1,21 @@
 # HTTP Request Handler 🌐
 
-[![NPM version](https://img.shields.io/npm/v/http-request-handler.svg)](https://www.npmjs.com/package/http-request-handler)
-[![Build Status](https://img.shields.io/travis/com/tu-username/http-request-handler/master.svg)](https://travis-ci.com/tu-username/http-request-handler)
-[![Coverage Status](https://coveralls.io/repos/github/tu-username/http-request-handler/badge.svg?branch=master)](https://coveralls.io/github/tu-username/http-request-handler?branch=master)
+[![NPM version](https://img.shields.io/npm/v/innoboxrr-http-request.svg)](https://www.npmjs.com/package/innoboxrr-http-request)
+[![Build Status](https://img.shields.io/travis/com/tu-username/innoboxrr-http-request/master.svg)](https://travis-ci.com/tu-username/innoboxrr-http-request)
+[![Coverage Status](https://coveralls.io/repos/github/tu-username/innoboxrr-http-request/badge.svg?branch=master)](https://coveralls.io/github/tu-username/http-request-handler?branch=master)
 
 Un manejador de solicitudes HTTP flexible para Node.js y Vue, que facilita la realización de solicitudes HTTP con diversas opciones de configuración.
 
 ## 🚀 Instalación
 
 ```bash
-npm install http-request-handler
+npm install innoboxrr-http-request
 ```
 
 o si usas yarn:
 
 ```bash
-yarn add http-request-handler
+yarn add innoboxrr-http-request
 ```
 
 ## 📘 Uso
@@ -25,7 +25,7 @@ yarn add http-request-handler
 Importa y utiliza `makeHttpRequest` directamente en tu módulo ES6.
 
 ```javascript
-import makeHttpRequest from 'http-request-handler';
+import makeHttpRequest from 'innoboxrr-http-request';
 
 // Utiliza makeHttpRequest...
 makeHttpRequest('GET', 'https://api.example.com/data')
@@ -44,7 +44,7 @@ Registra `HttpRequestPlugin` en tu aplicación Vue para acceder a él globalment
 ```javascript
 import { createApp } from 'vue';
 import App from './App.vue';
-import { HttpRequestPlugin } from 'http-request-handler';
+import { HttpRequestPlugin } from 'innoboxrr-http-request';
 
 const app = createApp(App);
 app.use(HttpRequestPlugin);
@@ -74,7 +74,7 @@ Utiliza VuexHttpRequestPlugin para inyectar la función en tu store de Vuex.
 
 ```javascript
 import Vuex from 'vuex';
-import { VuexHttpRequestPlugin } from 'http-request-handler';
+import { VuexHttpRequestPlugin } from 'innoboxrr-http-request';
 
 const store = new Vuex.Store({
     // Tu configuración de Vuex...
@@ -102,7 +102,7 @@ actions: {
 
 ## 🔍 Documentación
 
-Para más información sobre cómo utilizar `http-request-handler`, consulta la [documentación completa](#).
+Para más información sobre cómo utilizar `innoboxrr-http-request`, consulta la [documentación completa](#).
 
 ## 🤝 Contribuciones
 
