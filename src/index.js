@@ -1,12 +1,16 @@
-// src/index.js
 import makeHttpRequest from './makeHttpRequest';
 
-const HttpRequestPlugin = {
+const VueHttpRequestPlugin = {
     install(app) {
         app.config.globalProperties.$httpRequest = makeHttpRequest;
     }
 };
 
-// Exporta la función para uso general y el plugin para Vue
-export { makeHttpRequest, HttpRequestPlugin };
+const VuexHttpRequestPlugin = store => {
+    store.$httpRequest = makeHttpRequest;
+};
+
+// Exporta la función para uso general, el plugin para Vue y el plugin para Vuex
+export { makeHttpRequest, VueHttpRequestPlugin, VuexHttpRequestPlugin };
+
 export default makeHttpRequest;
