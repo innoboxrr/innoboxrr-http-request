@@ -14,7 +14,6 @@ import SwalImported from 'sweetalert2';
  * @returns {Promise} Promesa con la respuesta de la solicitud.
  */
 const makeHttpRequest = async (method, url, data = {}, headers = {}, maxRetries = 0, retryInterval = 1500, confirmOptions = null) => {
-    // Usar Swal global si está disponible, de lo contrario usar la versión importada
     const Swal = window.Swal || SwalImported;
 
     const makeRequest = async (retryCount) => {
@@ -26,7 +25,19 @@ const makeHttpRequest = async (method, url, data = {}, headers = {}, maxRetries 
                 }
             }
 
-            const response = await axios({ method, url, headers, data });
+            // Diferenciar el manejo de 'params' y 'data' según el método HTTP
+            const config = {
+                method: method,
+                url: url,
+                headers: headers,
+            };
+            if (method.toLowerCase() === 'get') {
+                config.params = data; // Usar 'params' para GET
+            } else {
+                config.data = data; // Usar 'data' para otros métodos
+            }
+
+            const response = await axios(config);
             return response.data;
         } catch (error) {
             if (retryCount < maxRetries) {
