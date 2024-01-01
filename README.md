@@ -96,9 +96,52 @@ actions: {
             });
     }
 }
-
 ```
+Ejemplo completo: 
 
+``` javascript 
+import makeHttpRequest from './makeHttpRequest'; // Asegúrate de que la ruta sea correcta
+
+// Datos a enviar en la solicitud POST
+const postData = {
+  key1: 'value1',
+  key2: 'value2'
+};
+
+// Encabezados personalizados para la solicitud
+const customHeaders = {
+  'Authorization': 'Bearer token',
+  'Content-Type': 'application/json'
+};
+
+// Opciones de confirmación para Sweet Alert
+const confirmOptions = {
+  title: '¿Estás seguro?',
+  text: "¡No podrás revertir esto!",
+  icon: 'warning',
+  showCancelButton: true,
+  confirmButtonColor: '#3085d6',
+  cancelButtonColor: '#d33',
+  confirmButtonText: 'Sí, ¡hazlo!'
+};
+
+// Uso de la función makeHttpRequest
+makeHttpRequest(
+  'POST',                            // Método HTTP
+  'https://api.example.com/data',    // URL de la solicitud
+  postData,                          // Datos a enviar
+  customHeaders,                     // Encabezados personalizados
+  3,                                 // Número máximo de reintentos
+  2000,                              // Intervalo entre reintentos en milisegundos
+  confirmOptions                     // Opciones para la confirmación con Sweet Alert
+)
+.then(data => {
+  console.log('Respuesta recibida:', data);
+})
+.catch(error => {
+  console.error('Ocurrió un error en la solicitud:', error);
+});
+```
 
 ## 🔍 Documentación
 
