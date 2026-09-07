@@ -1,156 +1,101 @@
-# HTTP Request Handler 🌐
+# innoboxrr-http-request
 
-[![NPM version](https://img.shields.io/npm/v/innoboxrr-http-request.svg)](https://www.npmjs.com/package/innoboxrr-http-request)
-[![Build Status](https://img.shields.io/travis/com/tu-username/innoboxrr-http-request/master.svg)](https://travis-ci.com/tu-username/innoboxrr-http-request)
-[![Coverage Status](https://coveralls.io/repos/github/tu-username/innoboxrr-http-request/badge.svg?branch=master)](https://coveralls.io/github/tu-username/http-request-handler?branch=master)
+Peticiones HTTP con reintentos y confirmación opcional. Sobre axios.
 
-Un manejador de solicitudes HTTP flexible para Node.js y Vue, que facilita la realización de solicitudes HTTP con diversas opciones de configuración.
-
-## 🚀 Instalación
-
-```bash
-npm install innoboxrr-http-request
+```
+npm i innoboxrr-http-request
 ```
 
-o si usas yarn:
+## Uso
 
-```bash
-yarn add innoboxrr-http-request
+```js
+import makeHttpRequest from 'innoboxrr-http-request'
+
+// GET: los datos viajan como query
+const posts = await makeHttpRequest('get', route('api.blog.post.index'), { page: 2 }, {}, 3, 1500)
+
+// POST con confirmación
+await makeHttpRequest('delete', url, { post_id: 1 }, {}, 0, 1500, {
+    title: 'Confirmar operación',
+    text: '¿Seguro que quieres borrarlo?',
+    icon: 'warning',
+    showCancelButton: true,
+})
 ```
 
-## 📘 Uso
+Devuelve el **cuerpo** de la respuesta, no la respuesta de axios.
 
-### En un módulo ES6
-
-Importa y utiliza `makeHttpRequest` directamente en tu módulo ES6.
-
-```javascript
-import makeHttpRequest from 'innoboxrr-http-request';
-
-// Utiliza makeHttpRequest...
-makeHttpRequest('GET', 'https://api.example.com/data')
-  .then(response => {
-    console.log(response);
-  })
-  .catch(error => {
-    console.error(error);
-  });
+```
+makeHttpRequest(method, url, data, headers, maxRetries, retryInterval, confirmOptions, options)
 ```
 
-### En Vue 3
+| | |
+|---|---|
+| `data` | En `GET` y `HEAD` viaja como query; en el resto, en el cuerpo. |
+| `maxRetries` | Reintentos como máximo. Por defecto 0. |
+| `retryInterval` | Espera entre reintentos, en ms. |
+| `confirmOptions` | Diálogo de SweetAlert antes de enviar. |
+| `options` | `{ timeout, signal, withCredentials }`. El timeout por defecto es 30 s. |
 
-Registra `VueHttpRequestPlugin` en tu aplicación Vue para acceder a él globalmente.
+## Reintentos
 
-```javascript
-import { createApp } from 'vue';
-import App from './App.vue';
-import { VueHttpRequestPlugin } from 'innoboxrr-http-request';
+Solo se reintenta lo que puede ser transitorio:
 
-const app = createApp(App);
-app.use(VueHttpRequestPlugin);
+| | |
+|---|---|
+| Sin respuesta (red, timeout) | sí |
+| `5xx` | sí |
+| `429` | sí, respetando el `Retry-After` del servidor |
+| `4xx` | **no** |
 
-app.mount('#app');
-```
+Reintentar un `422` tres veces es tres veces el mismo error de validación, y un
+`403` no se va a arreglar solo.
 
-En tus componentes Vue, puedes acceder a la función a través de `this.$httpRequest`.
+## Cancelación
 
-```javascript
-export default {
-  mounted() {
-    this.$httpRequest('GET', 'https://api.example.com/data')
-      .then(response => {
-        console.log(response);
-      })
-      .catch(error => {
-        console.error(error);
-      });
-  }
-};
-```
+```js
+import makeHttpRequest, { RequestCancelledError } from 'innoboxrr-http-request'
 
-### En Vuex
-
-Utiliza VuexHttpRequestPlugin para inyectar la función en tu store de Vuex.
-
-```javascript
-import Vuex from 'vuex';
-import { VuexHttpRequestPlugin } from 'innoboxrr-http-request';
-
-const store = new Vuex.Store({
-    // Tu configuración de Vuex...
-    plugins: [VuexHttpRequestPlugin]
-});
-```
-Luego, en tus acciones Vuex:
-
-```javascript
-// En un módulo Vuex
-actions: {
-    fetchData({ commit }) {
-        this.$httpRequest('GET', 'https://api.example.com')
-            .then(response => {
-                commit('setData', response);
-            })
-            .catch(error => {
-                console.error(error);
-            });
+try {
+    await makeHttpRequest('delete', url, data, {}, 0, 1500, confirmOptions)
+} catch (error) {
+    if (error instanceof RequestCancelledError) {
+        return   // el usuario dijo que no; no es un fallo
     }
+
+    mostrarError(error)
 }
 ```
-Ejemplo completo: 
 
-``` javascript 
-import makeHttpRequest from './makeHttpRequest'; // Asegúrate de que la ruta sea correcta
+## Vue
 
-// Datos a enviar en la solicitud POST
-const postData = {
-  key1: 'value1',
-  key2: 'value2'
-};
+```js
+import { VueHttpRequestPlugin } from 'innoboxrr-http-request/vue'
 
-// Encabezados personalizados para la solicitud
-const customHeaders = {
-  'Authorization': 'Bearer token',
-  'Content-Type': 'application/json'
-};
-
-// Opciones de confirmación para Sweet Alert
-const confirmOptions = {
-  title: '¿Estás seguro?',
-  text: "¡No podrás revertir esto!",
-  icon: 'warning',
-  showCancelButton: true,
-  confirmButtonColor: '#3085d6',
-  cancelButtonColor: '#d33',
-  confirmButtonText: 'Sí, ¡hazlo!'
-};
-
-// Uso de la función makeHttpRequest
-makeHttpRequest(
-  'POST',                            // Método HTTP
-  'https://api.example.com/data',    // URL de la solicitud
-  postData,                          // Datos a enviar
-  customHeaders,                     // Encabezados personalizados
-  3,                                 // Número máximo de reintentos
-  2000,                              // Intervalo entre reintentos en milisegundos
-  confirmOptions                     // Opciones para la confirmación con Sweet Alert
-)
-.then(data => {
-  console.log('Respuesta recibida:', data);
-})
-.catch(error => {
-  console.error('Ocurrió un error en la solicitud:', error);
-});
+app.use(VueHttpRequestPlugin)   // this.$httpRequest
 ```
 
-## 🔍 Documentación
+## Qué cambió en la 2.0
 
-Para más información sobre cómo utilizar `innoboxrr-http-request`, consulta la [documentación completa](#).
+- **Se reintentaba cualquier error**, incluidos los `4xx`.
+- **La confirmación se preguntaba dentro del bucle de reintentos**, así que con
+  `maxRetries` podía volver a preguntar.
+- **Cancelar lanzaba un `Error` genérico**, indistinguible de un fallo de red.
+- **`window.Swal`** lanzaba un `ReferenceError` en Node y en un render de
+  servidor, pese a que el paquete se anunciaba "para Node.js y Vue".
+- **El paquete no declaraba `type: "module"`** aunque el código es ESM, así que
+  Node lo leía como CommonJS y fallaba al importarlo.
+- **Sin timeout**: una petición podía quedarse colgada indefinidamente.
+- Se retira la dependencia `sweetalert` (v1), que no se usaba en ninguna parte,
+  y el plugin de Vuex, porque el ecosistema migró a Pinia.
+- El plugin de Vue sale a `innoboxrr-http-request/vue` para que un proyecto
+  React no lo arrastre.
 
-## 🤝 Contribuciones
+El test que había afirmaba que se llamaba a `axios.get(...)`; el código llama a
+`axios(config)`. Nunca pasó, y `jest` ni estaba instalado.
 
-Las contribuciones son siempre bienvenidas! Por favor, lee el [documento de contribución](CONTRIBUTING.md) para saber cómo puedes contribuir.
+## Pruebas
 
-## 📄 Licencia
-
-Distribuido bajo la licencia MIT. Ver [`LICENSE`](LICENSE) para más información.
+```
+npm test
+```

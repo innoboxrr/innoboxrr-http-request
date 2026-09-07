@@ -1,16 +1,11 @@
-import makeHttpRequest from './makeHttpRequest';
+/**
+ * innoboxrr-http-request
+ *
+ * El nucleo no depende de ningun framework. El plugin de Vue vive en su propio
+ * punto de entrada para que un proyecto React no lo arrastre:
+ *
+ *     import makeHttpRequest from 'innoboxrr-http-request'
+ *     import { VueHttpRequestPlugin } from 'innoboxrr-http-request/vue'
+ */
 
-const VueHttpRequestPlugin = {
-    install(app) {
-        app.config.globalProperties.$httpRequest = makeHttpRequest;
-    }
-};
-
-const VuexHttpRequestPlugin = store => {
-    store.$httpRequest = makeHttpRequest;
-};
-
-// Exporta la función para uso general, el plugin para Vue y el plugin para Vuex
-export { makeHttpRequest, VueHttpRequestPlugin, VuexHttpRequestPlugin };
-
-export default makeHttpRequest;
+export { default, default as makeHttpRequest, RequestCancelledError, isRetryable } from './makeHttpRequest.js'
