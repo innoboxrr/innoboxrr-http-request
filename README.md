@@ -99,3 +99,7 @@ El test que había afirmaba que se llamaba a `axios.get(...)`; el código llama 
 ```
 npm test
 ```
+
+## Documentación / Documentation
+
+Documentación completa del ecosistema, en español y en inglés / Full ecosystem documentation, in Spanish and English: <https://innoboxrr.github.io/docs/interfaz/http-rutas-i18n>
